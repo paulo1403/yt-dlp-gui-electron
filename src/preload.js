@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Download operations
   downloadVideo: (options) => ipcRenderer.invoke('download-video', options),
   getVideoInfo: (url) => ipcRenderer.invoke('get-video-info', url),
+  stopDownload: () => ipcRenderer.invoke('stop-download'),
   
   // File system operations
   selectFolder: () => ipcRenderer.invoke('select-folder'),

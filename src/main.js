@@ -7,6 +7,7 @@ const Store = require('electron-store');
 const store = new Store();
 
 let mainWindow;
+let currentDownloadProcess = null;
 
 function createWindow() {
   // Create the browser window
@@ -183,6 +184,7 @@ ipcMain.handle('download-video', async (event, options) => {
 
     // Spawn yt-dlp process
     const ytdlp = spawn('yt-dlp', args);
+    currentDownloadProcess = ytdlp;
     
     let output = '';
     let error = '';
@@ -202,14 +204,19 @@ ipcMain.handle('download-video', async (event, options) => {
     });
 
     ytdlp.on('close', (code) => {
+      currentDownloadProcess = null;
       if (code === 0) {
         resolve({ success: true, output });
+      } else if (code === null || code === 130) {
+        // Process was killed/cancelled
+        reject({ success: false, error: 'Download stopped by user', code });
       } else {
         reject({ success: false, error, code });
       }
     });
 
     ytdlp.on('error', (err) => {
+      currentDownloadProcess = null;
       reject({ success: false, error: err.message });
     });
   });
@@ -269,6 +276,31 @@ ipcMain.handle('get-video-info', async (event, url) => {
     ytdlp.on('error', (err) => {
       reject({ error: err.message });
     });
+  });
+});
+
+// Handle stopping download
+ipcMain.handle('stop-download', async () => {
+  return new Promise((resolve, reject) => {
+    if (currentDownloadProcess) {
+      try {
+        // Kill the yt-dlp process
+        currentDownloadProcess.kill('SIGTERM');
+        
+        // Give it some time to terminate gracefully, then force kill if needed
+        setTimeout(() => {
+          if (currentDownloadProcess && !currentDownloadProcess.killed) {
+            currentDownloadProcess.kill('SIGKILL');
+          }
+        }, 5000);
+        
+        resolve({ success: true });
+      } catch (error) {
+        reject({ success: false, error: error.message });
+      }
+    } else {
+      resolve({ success: true, message: 'No download in progress' });
+    }
   });
 });
 

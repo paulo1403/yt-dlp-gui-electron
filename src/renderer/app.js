@@ -12,6 +12,7 @@ const audioFormatSelect = document.getElementById('audio-format-select');
 const speedLimit = document.getElementById('speed-limit');
 const speedUnit = document.getElementById('speed-unit');
 const downloadBtn = document.getElementById('download-btn');
+const stopBtn = document.getElementById('stop-btn');
 const progressSection = document.getElementById('progress-section');
 const progressFill = document.getElementById('progress-fill');
 const progressText = document.getElementById('progress-text');
@@ -153,6 +154,9 @@ function setupEventListeners() {
     // Download button
     downloadBtn.addEventListener('click', startDownload);
     
+    // Stop button
+    stopBtn.addEventListener('click', stopDownload);
+    
     // Advanced options toggle
     advancedToggle.addEventListener('click', toggleAdvancedOptions);
     
@@ -195,6 +199,11 @@ function setupEventListeners() {
     // Enable download button when URL and path are set
     const checkDownloadReady = () => {
         downloadBtn.disabled = !urlInput.value.trim() || !outputPathInput.value.trim() || isDownloading;
+        
+        // Hide stop button when not downloading
+        if (!isDownloading) {
+            stopBtn.style.display = 'none';
+        }
     };
     
     urlInput.addEventListener('input', checkDownloadReady);
@@ -318,6 +327,7 @@ async function startDownload() {
     isDownloading = true;
     downloadBtn.disabled = true;
     downloadBtn.innerHTML = '<div class="spinner"></div> Downloading...';
+    stopBtn.style.display = 'inline-block';
     
     progressSection.style.display = 'block';
     progressFill.style.width = '0%';
@@ -372,12 +382,39 @@ async function startDownload() {
         }
         
     } catch (error) {
-        progressText.textContent = 'Download failed!';
-        showStatus(`Download failed: ${error.error || 'Unknown error'}`, 'error');
+        if (error.message === 'Download stopped by user') {
+            progressText.textContent = 'Download stopped by user';
+            showStatus('Download stopped successfully!', 'success');
+        } else {
+            progressText.textContent = 'Download failed!';
+            showStatus(`Download failed: ${error.error || 'Unknown error'}`, 'error');
+        }
     } finally {
         isDownloading = false;
         downloadBtn.disabled = false;
         downloadBtn.innerHTML = 'Download';
+        stopBtn.style.display = 'none';
+    }
+}
+
+// Stop download
+async function stopDownload() {
+    if (!isDownloading) return;
+    
+    try {
+        stopBtn.disabled = true;
+        stopBtn.innerHTML = 'Stopping...';
+        
+        await window.electronAPI.stopDownload();
+        
+        progressText.textContent = 'Download stopped by user';
+        showStatus('Download stopped successfully!', 'success');
+        
+    } catch (error) {
+        showStatus('Error stopping download', 'error');
+    } finally {
+        stopBtn.disabled = false;
+        stopBtn.innerHTML = 'Stop Download';
     }
 }
 
