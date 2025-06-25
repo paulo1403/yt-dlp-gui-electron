@@ -1,0 +1,3 @@
+# This is a placeholder for the app icon
+# You can add a proper icon file (icon.png or icon.ico) here later
+# The icon should be at least 512x512 pixels for best results

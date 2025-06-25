@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT-DLP GUI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>YT-DLP GUI</h1>
+            <p>Download videos and audio from YouTube and other platforms</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- URL Input Section -->
+            <section class="url-section">
+                <div class="input-group">
+                    <label for="url-input">Video URL:</label>
+                    <div class="url-input-container">
+                        <input type="text" id="url-input" placeholder="Paste video URL here..." class="url-input">
+                        <button id="get-info-btn" class="btn btn-secondary">Get Info</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video Info Section -->
+            <section class="video-info" id="video-info" style="display: none;">
+                <h3>Video Information</h3>
+                <div class="info-content">
+                    <img id="video-thumbnail" class="thumbnail" alt="Video thumbnail">
+                    <div class="info-details">
+                        <h4 id="video-title"></h4>
+                        <p><strong>Duration:</strong> <span id="video-duration"></span></p>
+                        <p><strong>Uploader:</strong> <span id="video-uploader"></span></p>
+                        <p><strong>Views:</strong> <span id="video-views"></span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Download Options Section -->
+            <section class="options-section">
+                <div class="options-grid">
+                    <!-- Output Path -->
+                    <div class="option-group">
+                        <label for="output-path">Download Location:</label>
+                        <div class="path-input-container">
+                            <input type="text" id="output-path" readonly class="path-input">
+                            <button id="browse-btn" class="btn btn-secondary">Browse</button>
+                            <button id="open-folder-btn" class="btn btn-secondary" style="display: none;">Open Folder</button>
+                        </div>
+                    </div>
+
+                    <!-- Format Selection -->
+                    <div class="option-group">
+                        <label for="format-select">Format:</label>
+                        <select id="format-select" class="select-input">
+                            <option value="best">Best Video + Audio</option>
+                            <option value="audio">Audio Only (MP3)</option>
+                            <option value="mp4">MP4 Video</option>
+                            <option value="webm">WebM Video</option>
+                        </select>
+                    </div>
+
+                    <!-- Quality Selection -->
+                    <div class="option-group">
+                        <label for="quality-select">Quality:</label>
+                        <select id="quality-select" class="select-input">
+                            <option value="best">Best Available</option>
+                            <option value="1080">1080p</option>
+                            <option value="720">720p</option>
+                            <option value="480">480p</option>
+                            <option value="360">360p</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Download Button -->
+            <section class="download-section">
+                <button id="download-btn" class="btn btn-primary download-btn" disabled>
+                    <span class="btn-text">Download</span>
+                    <div class="spinner" style="display: none;"></div>
+                </button>
+            </section>
+
+            <!-- Progress Section -->
+            <section class="progress-section" id="progress-section" style="display: none;">
+                <h3>Download Progress</h3>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">Initializing...</div>
+                </div>
+                <div class="log-container">
+                    <pre id="download-log"></pre>
+                </div>
+            </section>
+
+            <!-- Status Section -->
+            <section class="status-section">
+                <div id="status-message" class="status-message"></div>
+            </section>
+        </main>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Settings</h3>
+                    <button id="close-settings" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="setting-group">
+                        <label for="default-path">Default Download Path:</label>
+                        <div class="path-input-container">
+                            <input type="text" id="default-path" class="path-input">
+                            <button id="browse-default-btn" class="btn btn-secondary">Browse</button>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="default-format">Default Format:</label>
+                        <select id="default-format" class="select-input">
+                            <option value="best">Best Video + Audio</option>
+                            <option value="audio">Audio Only (MP3)</option>
+                            <option value="mp4">MP4 Video</option>
+                            <option value="webm">WebM Video</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="default-quality">Default Quality:</label>
+                        <select id="default-quality" class="select-input">
+                            <option value="best">Best Available</option>
+                            <option value="1080">1080p</option>
+                            <option value="720">720p</option>
+                            <option value="480">480p</option>
+                            <option value="360">360p</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-settings" class="btn btn-primary">Save Settings</button>
+                    <button id="cancel-settings" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Button -->
+        <button id="settings-btn" class="settings-btn" title="Settings">⚙️</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
