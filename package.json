@@ -7,8 +7,19 @@
     "start": "electron .",
     "dev": "electron . --dev",
     "build": "electron-builder",
+    "build:linux": "electron-builder --linux",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:all": "electron-builder --linux --win --mac",
     "dist": "electron-builder --publish=never",
-    "pack": "electron-builder --dir"
+    "dist:linux": "electron-builder --linux --publish=never",
+    "dist:win": "electron-builder --win --publish=never",
+    "dist:mac": "electron-builder --mac --publish=never",
+    "dist:all": "electron-builder --linux --win --mac --publish=never",
+    "pack": "electron-builder --dir",
+    "pack:linux": "electron-builder --linux --dir",
+    "pack:win": "electron-builder --win --dir",
+    "pack:mac": "electron-builder --mac --dir"
   },
   "keywords": [
     "yt-dlp",
@@ -17,7 +28,10 @@
     "downloader",
     "gui"
   ],
-  "author": "Paulo",
+  "author": {
+    "name": "Paulo",
+    "email": "paulollanosc@gmail.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "electron": "^28.0.0",
@@ -29,23 +43,70 @@
   "build": {
     "appId": "com.paulo.yt-dlp-gui",
     "productName": "YT-DLP GUI",
+    "copyright": "Copyright © 2025 Paulo",
     "directories": {
       "output": "dist"
     },
     "files": [
       "src/**/*",
-      "assets/**/*",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "!node_modules/.cache/**/*",
+      "!**/*.map"
     ],
     "linux": {
-      "target": "AppImage",
-      "category": "AudioVideo"
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        },
+        {
+          "target": "tar.gz",
+          "arch": ["x64"]
+        }
+      ],
+      "category": "AudioVideo",
+      "desktop": {
+        "Name": "YT-DLP GUI",
+        "Comment": "Download videos and audio from YouTube and other platforms",
+        "Categories": "AudioVideo;Audio;Video;Player;",
+        "Keywords": "youtube;download;video;audio;yt-dlp;"
+      }
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "publisherName": "Paulo",
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "YT-DLP GUI"
     },
     "mac": {
-      "target": "dmg"
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64"]
+        }
+      ],
+      "category": "public.app-category.video"
     }
   }
 }
