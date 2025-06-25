@@ -7,12 +7,38 @@ const browseBtn = document.getElementById('browse-btn');
 const openFolderBtn = document.getElementById('open-folder-btn');
 const formatSelect = document.getElementById('format-select');
 const qualitySelect = document.getElementById('quality-select');
+const audioQualitySelect = document.getElementById('audio-quality-select');
+const audioFormatSelect = document.getElementById('audio-format-select');
+const speedLimit = document.getElementById('speed-limit');
+const speedUnit = document.getElementById('speed-unit');
 const downloadBtn = document.getElementById('download-btn');
 const progressSection = document.getElementById('progress-section');
 const progressFill = document.getElementById('progress-fill');
 const progressText = document.getElementById('progress-text');
 const downloadLog = document.getElementById('download-log');
 const statusMessage = document.getElementById('status-message');
+
+// Advanced options
+const advancedToggle = document.getElementById('advanced-toggle');
+const advancedOptions = document.getElementById('advanced-options');
+const noPlaylist = document.getElementById('no-playlist');
+const playlistReverse = document.getElementById('playlist-reverse');
+const playlistRandom = document.getElementById('playlist-random');
+const playlistItems = document.getElementById('playlist-items');
+const writeSubs = document.getElementById('write-subs');
+const writeAutoSubs = document.getElementById('write-auto-subs');
+const embedSubs = document.getElementById('embed-subs');
+const writeThumbnail = document.getElementById('write-thumbnail');
+const embedThumbnail = document.getElementById('embed-thumbnail');
+const writeInfoJson = document.getElementById('write-info-json');
+const writeDescription = document.getElementById('write-description');
+const embedMetadata = document.getElementById('embed-metadata');
+const sponsorblockMark = document.getElementById('sponsorblock-mark');
+const sponsorblockRemove = document.getElementById('sponsorblock-remove');
+const sponsorblockCategories = document.getElementById('sponsorblock-categories');
+const continueDl = document.getElementById('continue-dl');
+const noOverwrites = document.getElementById('no-overwrites');
+const ignoreErrors = document.getElementById('ignore-errors');
 
 // Settings modal elements
 const settingsBtn = document.getElementById('settings-btn');
@@ -42,6 +68,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadSettings();
     setupEventListeners();
     setupDownloadListeners();
+    updateFormatVisibility();
+    handleSponsorBlockChange();
 });
 
 // Check if yt-dlp is installed
@@ -125,6 +153,12 @@ function setupEventListeners() {
     // Download button
     downloadBtn.addEventListener('click', startDownload);
     
+    // Advanced options toggle
+    advancedToggle.addEventListener('click', toggleAdvancedOptions);
+    
+    // Format change handler
+    formatSelect.addEventListener('change', updateFormatVisibility);
+    
     // Settings modal
     settingsBtn.addEventListener('click', () => {
         settingsModal.style.display = 'flex';
@@ -154,6 +188,10 @@ function setupEventListeners() {
         }
     });
     
+    // SponsorBlock option handlers
+    sponsorblockMark.addEventListener('change', handleSponsorBlockChange);
+    sponsorblockRemove.addEventListener('change', handleSponsorBlockChange);
+    
     // Enable download button when URL and path are set
     const checkDownloadReady = () => {
         downloadBtn.disabled = !urlInput.value.trim() || !outputPathInput.value.trim() || isDownloading;
@@ -161,6 +199,41 @@ function setupEventListeners() {
     
     urlInput.addEventListener('input', checkDownloadReady);
     outputPathInput.addEventListener('change', checkDownloadReady);
+}
+
+// Toggle advanced options
+function toggleAdvancedOptions() {
+    const isVisible = advancedOptions.style.display === 'block';
+    
+    if (isVisible) {
+        advancedOptions.style.display = 'none';
+        advancedToggle.classList.remove('active');
+        advancedToggle.querySelector('.toggle-text').textContent = 'Show Advanced Options';
+    } else {
+        advancedOptions.style.display = 'block';
+        advancedToggle.classList.add('active');
+        advancedToggle.querySelector('.toggle-text').textContent = 'Hide Advanced Options';
+    }
+}
+
+// Update visibility based on format selection
+function updateFormatVisibility() {
+    const isAudioOnly = formatSelect.value === 'audio';
+    
+    // Show/hide quality selector for video formats
+    qualitySelect.parentElement.style.display = isAudioOnly ? 'none' : 'block';
+    
+    // Show/hide audio format selector for audio-only downloads
+    audioFormatSelect.parentElement.style.display = isAudioOnly ? 'block' : 'none';
+}
+
+// Handle SponsorBlock option changes
+function handleSponsorBlockChange() {
+    const categoriesSelect = sponsorblockCategories;
+    const isEnabled = sponsorblockMark.checked || sponsorblockRemove.checked;
+    
+    categoriesSelect.disabled = !isEnabled;
+    categoriesSelect.style.opacity = isEnabled ? '1' : '0.5';
 }
 
 // Setup download progress listeners
@@ -256,7 +329,38 @@ async function startDownload() {
             url,
             outputPath,
             format,
-            quality
+            quality,
+            audioQuality: audioQualitySelect.value,
+            audioFormat: audioFormatSelect.value,
+            speedLimit: getSpeedLimit(),
+            
+            // Advanced options
+            noPlaylist: noPlaylist.checked,
+            playlistReverse: playlistReverse.checked,
+            playlistRandom: playlistRandom.checked,
+            playlistItems: playlistItems.value.trim(),
+            
+            // Subtitle options
+            writeSubs: writeSubs.checked,
+            writeAutoSubs: writeAutoSubs.checked,
+            embedSubs: embedSubs.checked,
+            
+            // Metadata options
+            writeThumbnail: writeThumbnail.checked,
+            embedThumbnail: embedThumbnail.checked,
+            writeInfoJson: writeInfoJson.checked,
+            writeDescription: writeDescription.checked,
+            embedMetadata: embedMetadata.checked,
+            
+            // SponsorBlock options
+            sponsorblockMark: sponsorblockMark.checked,
+            sponsorblockRemove: sponsorblockRemove.checked,
+            sponsorblockCategories: sponsorblockCategories.value,
+            
+            // Download behavior
+            continueDl: continueDl.checked,
+            noOverwrites: noOverwrites.checked,
+            ignoreErrors: ignoreErrors.checked
         };
         
         const result = await window.electronAPI.downloadVideo(options);
@@ -275,6 +379,16 @@ async function startDownload() {
         downloadBtn.disabled = false;
         downloadBtn.innerHTML = 'Download';
     }
+}
+
+// Get speed limit value
+function getSpeedLimit() {
+    const limit = speedLimit.value.trim();
+    const unit = speedUnit.value;
+    
+    if (!limit || !unit) return null;
+    
+    return limit + unit;
 }
 
 // Update download progress

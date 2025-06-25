@@ -62,6 +62,7 @@
                             <option value="audio">Audio Only (MP3)</option>
                             <option value="mp4">MP4 Video</option>
                             <option value="webm">WebM Video</option>
+                            <option value="mkv">MKV Video</option>
                         </select>
                     </div>
 
@@ -70,11 +71,191 @@
                         <label for="quality-select">Quality:</label>
                         <select id="quality-select" class="select-input">
                             <option value="best">Best Available</option>
+                            <option value="2160">4K (2160p)</option>
+                            <option value="1440">1440p</option>
                             <option value="1080">1080p</option>
                             <option value="720">720p</option>
                             <option value="480">480p</option>
                             <option value="360">360p</option>
                         </select>
+                    </div>
+
+                    <!-- Audio Quality -->
+                    <div class="option-group">
+                        <label for="audio-quality-select">Audio Quality:</label>
+                        <select id="audio-quality-select" class="select-input">
+                            <option value="best">Best Available</option>
+                            <option value="320">320k</option>
+                            <option value="256">256k</option>
+                            <option value="192">192k</option>
+                            <option value="128">128k</option>
+                            <option value="96">96k</option>
+                        </select>
+                    </div>
+
+                    <!-- Audio Format for Audio-Only Downloads -->
+                    <div class="option-group">
+                        <label for="audio-format-select">Audio Format:</label>
+                        <select id="audio-format-select" class="select-input">
+                            <option value="mp3">MP3</option>
+                            <option value="aac">AAC</option>
+                            <option value="opus">OPUS</option>
+                            <option value="m4a">M4A</option>
+                            <option value="flac">FLAC</option>
+                            <option value="wav">WAV</option>
+                        </select>
+                    </div>
+
+                    <!-- Speed Limit -->
+                    <div class="option-group">
+                        <label for="speed-limit">Speed Limit:</label>
+                        <div class="speed-input-container">
+                            <input type="text" id="speed-limit" class="text-input" placeholder="e.g., 1M, 500K">
+                            <select id="speed-unit" class="select-input-small">
+                                <option value="">No Limit</option>
+                                <option value="K">KB/s</option>
+                                <option value="M">MB/s</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Options Section -->
+                <div class="advanced-section">
+                    <button id="advanced-toggle" class="btn btn-secondary advanced-toggle">
+                        <span class="toggle-text">Show Advanced Options</span>
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                    
+                    <div id="advanced-options" class="advanced-options" style="display: none;">
+                        <div class="options-grid">
+                            <!-- Playlist Options -->
+                            <div class="option-group">
+                                <label>Playlist Options:</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="no-playlist" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Download single video only
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="playlist-reverse" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Reverse playlist order
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="playlist-random" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Random playlist order
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Subtitle Options -->
+                            <div class="option-group">
+                                <label>Subtitles:</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="write-subs" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Download subtitles
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="write-auto-subs" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Download auto-generated subtitles
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="embed-subs" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Embed subtitles in video
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Metadata Options -->
+                            <div class="option-group">
+                                <label>Metadata & Extras:</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="write-thumbnail" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Download thumbnail
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="embed-thumbnail" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Embed thumbnail in file
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="write-info-json" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Save video info as JSON
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="write-description" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Save video description
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="embed-metadata" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Embed metadata in file
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- SponsorBlock Options -->
+                            <div class="option-group">
+                                <label>SponsorBlock (YouTube):</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="sponsorblock-mark" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Mark sponsor segments
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="sponsorblock-remove" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Remove sponsor segments
+                                    </label>
+                                </div>
+                                <select id="sponsorblock-categories" class="select-input" style="margin-top: 8px;">
+                                    <option value="sponsor">Sponsor segments only</option>
+                                    <option value="sponsor,intro,outro">Sponsor, Intro, Outro</option>
+                                    <option value="all">All categories</option>
+                                    <option value="all,-filler">All except filler</option>
+                                </select>
+                            </div>
+
+                            <!-- Download Behavior -->
+                            <div class="option-group">
+                                <label>Download Behavior:</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="continue-dl" class="checkbox-input" checked>
+                                        <span class="checkmark"></span>
+                                        Resume partial downloads
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="no-overwrites" class="checkbox-input" checked>
+                                        <span class="checkmark"></span>
+                                        Don't overwrite existing files
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="ignore-errors" class="checkbox-input">
+                                        <span class="checkmark"></span>
+                                        Ignore download errors
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Playlist Range -->
+                            <div class="option-group">
+                                <label for="playlist-items">Playlist Items (e.g., 1-5, 10):</label>
+                                <input type="text" id="playlist-items" class="text-input" placeholder="Leave empty for all items">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

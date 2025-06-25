@@ -58,36 +58,126 @@ app.on('activate', () => {
 // Handle yt-dlp download
 ipcMain.handle('download-video', async (event, options) => {
   return new Promise((resolve, reject) => {
-    const { url, outputPath, format, quality } = options;
+    const { 
+      url, 
+      outputPath, 
+      format, 
+      quality, 
+      audioQuality, 
+      audioFormat, 
+      speedLimit,
+      noPlaylist,
+      playlistReverse,
+      playlistRandom,
+      playlistItems,
+      writeSubs,
+      writeAutoSubs,
+      embedSubs,
+      writeThumbnail,
+      embedThumbnail,
+      writeInfoJson,
+      writeDescription,
+      embedMetadata,
+      sponsorblockMark,
+      sponsorblockRemove,
+      sponsorblockCategories,
+      continueDl,
+      noOverwrites,
+      ignoreErrors
+    } = options;
     
     // Build yt-dlp command arguments
-    const args = [
-      url,
-      '--output', path.join(outputPath, '%(title)s.%(ext)s')
-    ];
+    const args = [url];
 
-    // Add format options if specified
+    // Output path
+    args.push('--output', path.join(outputPath, '%(title)s.%(ext)s'));
+
+    // Format options
     if (format && format !== 'best') {
       if (format === 'audio') {
-        args.push('--extract-audio', '--audio-format', 'mp3');
+        args.push('--extract-audio', '--audio-format', audioFormat || 'mp3');
+        
+        // Audio quality
+        if (audioQuality && audioQuality !== 'best') {
+          args.push('--audio-quality', audioQuality);
+        }
       } else {
-        args.push('--format', format);
+        args.push('--remux-video', format);
       }
     }
 
-    // Add quality options if specified
-    if (quality && quality !== 'best') {
+    // Video quality
+    if (quality && quality !== 'best' && format !== 'audio') {
       args.push('--format', `best[height<=${quality}]`);
     }
 
-    // Add additional useful options
-    args.push(
-      '--no-playlist', // Download single video even if URL contains playlist
-      '--write-info-json', // Write video metadata
-      '--write-thumbnail', // Download thumbnail
-      '--embed-subs', // Embed subtitles if available
-      '--write-auto-sub' // Write auto-generated subtitles
-    );
+    // Speed limit
+    if (speedLimit) {
+      args.push('--limit-rate', speedLimit);
+    }
+
+    // Playlist options
+    if (noPlaylist) {
+      args.push('--no-playlist');
+    }
+    if (playlistReverse) {
+      args.push('--playlist-reverse');
+    }
+    if (playlistRandom) {
+      args.push('--playlist-random');
+    }
+    if (playlistItems) {
+      args.push('--playlist-items', playlistItems);
+    }
+
+    // Subtitle options
+    if (writeSubs) {
+      args.push('--write-subs');
+    }
+    if (writeAutoSubs) {
+      args.push('--write-auto-subs');
+    }
+    if (embedSubs) {
+      args.push('--embed-subs');
+    }
+
+    // Metadata and extras
+    if (writeThumbnail) {
+      args.push('--write-thumbnail');
+    }
+    if (embedThumbnail) {
+      args.push('--embed-thumbnail');
+    }
+    if (writeInfoJson) {
+      args.push('--write-info-json');
+    }
+    if (writeDescription) {
+      args.push('--write-description');
+    }
+    if (embedMetadata) {
+      args.push('--embed-metadata');
+    }
+
+    // SponsorBlock options
+    if (sponsorblockMark) {
+      args.push('--sponsorblock-mark', sponsorblockCategories || 'sponsor');
+    }
+    if (sponsorblockRemove) {
+      args.push('--sponsorblock-remove', sponsorblockCategories || 'sponsor');
+    }
+
+    // Download behavior
+    if (continueDl) {
+      args.push('--continue');
+    } else {
+      args.push('--no-continue');
+    }
+    if (noOverwrites) {
+      args.push('--no-overwrites');
+    }
+    if (ignoreErrors) {
+      args.push('--ignore-errors');
+    }
 
     console.log('Running yt-dlp with args:', args);
 
