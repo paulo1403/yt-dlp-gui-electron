@@ -18,6 +18,8 @@ const progressFill = document.getElementById('progress-fill');
 const progressText = document.getElementById('progress-text');
 const downloadLog = document.getElementById('download-log');
 const statusMessage = document.getElementById('status-message');
+const closeInfoBtn = document.getElementById('close-info-btn');
+const clearProgressBtn = document.getElementById('clear-progress-btn');
 
 // Advanced options
 const advancedToggle = document.getElementById('advanced-toggle');
@@ -157,6 +159,12 @@ function setupEventListeners() {
     // Stop button
     stopBtn.addEventListener('click', stopDownload);
     
+    // Close info button
+    closeInfoBtn.addEventListener('click', closeVideoInfo);
+    
+    // Clear progress button
+    clearProgressBtn.addEventListener('click', clearProgress);
+    
     // Advanced options toggle
     advancedToggle.addEventListener('click', toggleAdvancedOptions);
     
@@ -292,6 +300,25 @@ function displayVideoInfo(info) {
     videoInfoSection.style.display = 'block';
 }
 
+// Close video info section
+function closeVideoInfo() {
+    videoInfoSection.style.display = 'none';
+    currentVideoInfo = null;
+    
+    // Optional: Clear URL input (user can re-enter or paste new URL)
+    // urlInput.value = '';
+    // urlInput.focus();
+}
+
+// Clear progress section
+function clearProgress() {
+    progressSection.style.display = 'none';
+    progressFill.style.width = '0%';
+    progressText.textContent = 'Initializing...';
+    downloadLog.textContent = '';
+    clearProgressBtn.style.display = 'none';
+}
+
 // Select output folder
 async function selectOutputFolder() {
     const folderPath = await window.electronAPI.selectFolder();
@@ -333,6 +360,7 @@ async function startDownload() {
     progressFill.style.width = '0%';
     progressText.textContent = 'Starting download...';
     downloadLog.textContent = '';
+    clearProgressBtn.style.display = 'none';
     
     try {
         const options = {
@@ -379,15 +407,18 @@ async function startDownload() {
             progressFill.style.width = '100%';
             progressText.textContent = 'Download completed successfully!';
             showStatus('Download completed successfully!', 'success');
+            clearProgressBtn.style.display = 'inline-block';
         }
         
     } catch (error) {
         if (error.message === 'Download stopped by user') {
             progressText.textContent = 'Download stopped by user';
             showStatus('Download stopped successfully!', 'success');
+            clearProgressBtn.style.display = 'inline-block';
         } else {
             progressText.textContent = 'Download failed!';
             showStatus(`Download failed: ${error.error || 'Unknown error'}`, 'error');
+            clearProgressBtn.style.display = 'inline-block';
         }
     } finally {
         isDownloading = false;

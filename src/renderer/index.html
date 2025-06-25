@@ -29,7 +29,10 @@
 
             <!-- Video Info Section -->
             <section class="video-info" id="video-info" style="display: none;">
-                <h3>Video Information</h3>
+                <div class="video-info-header">
+                    <h3>Video Information</h3>
+                    <button id="close-info-btn" class="btn btn-secondary close-info-btn">×</button>
+                </div>
                 <div class="info-content">
                     <img id="video-thumbnail" class="thumbnail" alt="Video thumbnail">
                     <div class="info-details">
@@ -277,7 +280,10 @@
 
             <!-- Progress Section -->
             <section class="progress-section" id="progress-section" style="display: none;">
-                <h3>Download Progress</h3>
+                <div class="progress-header">
+                    <h3>Download Progress</h3>
+                    <button id="clear-progress-btn" class="btn btn-secondary clear-btn" style="display: none;">Clear</button>
+                </div>
                 <div class="progress-container">
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
